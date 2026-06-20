@@ -5,6 +5,8 @@ import useStore from '../context/useStore';
 import PageHeader from '../components/PageHeader';
 import GlassCard from '../components/GlassCard';
 import AnimatedNumber from '../components/AnimatedNumber';
+import { calculateFootprint } from '../utils/calculations';
+import { clampNumber } from '../utils/validation';
 
 const steps = [
   { id: 'housing', label: 'Housing', icon: '🏠' },
@@ -28,39 +30,6 @@ const defaultValues = {
   recycling: 'sometimes',
 };
 
-function calculateFootprint(values) {
-  let housing = 0, transport = 0, diet = 0, lifestyle = 0;
-
-  const housingBase = { apartment: 3200, house: 5500, 'large-house': 7800 };
-  housing = (housingBase[values.housingType] || 4000) / values.householdSize;
-  const elecMultiplier = { low: 0.7, average: 1.0, high: 1.4 };
-  housing *= elecMultiplier[values.electricityUsage] || 1.0;
-
-  const commuteFactors = { car: 0.21, hybrid: 0.12, ev: 0.05, transit: 0.06, bike: 0, walk: 0, remote: 0 };
-  const dailyCommuteCO2 = (commuteFactors[values.commuteMode] || 0.21) * values.commuteDistance * 2;
-  transport = dailyCommuteCO2 * 240;
-  transport += values.flights * 800;
-
-  const dietBase = { vegan: 1500, vegetarian: 2000, pescatarian: 2300, omnivore: 3300, 'heavy-meat': 4500 };
-  diet = dietBase[values.dietType] || 3300;
-  const wasteMultiplier = { low: 0.85, average: 1.0, high: 1.2 };
-  diet *= wasteMultiplier[values.foodWaste] || 1.0;
-  diet *= 1 - (values.localFood / 100) * 0.1;
-
-  const shoppingFactors = { minimal: 400, moderate: 800, frequent: 1500 };
-  lifestyle = shoppingFactors[values.shoppingFreq] || 800;
-  lifestyle += values.streaming * 20;
-  const recycleReduction = { always: 0.85, sometimes: 0.95, never: 1.0 };
-  lifestyle *= recycleReduction[values.recycling] || 1.0;
-
-  return {
-    housing: Math.round(housing),
-    transport: Math.round(transport),
-    diet: Math.round(diet),
-    lifestyle: Math.round(lifestyle),
-    total: Math.round(housing + transport + diet + lifestyle),
-  };
-}
 
 export default function CarbonCalculator() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -134,7 +103,8 @@ export default function CarbonCalculator() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <GlassCard delay={0.1} className="hover:-translate-y-2 hover:border-[var(--color-violet)]/30 hover:shadow-[0_0_30px_-10px_var(--color-violet)]">
               <h3 className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-6">Category Breakdown</h3>
-              <ResponsiveContainer width="100%" height={220}>
+              <div role="img" aria-label="Bar chart showing breakdown of emissions: housing, transport, diet, lifestyle" className="w-full h-[220px]">
+              <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} layout="vertical" margin={{ left: 10, right: 20 }}>
                   <CartesianGrid strokeDasharray="2 2" stroke="rgba(255,255,255,0.1)" horizontal={true} />
                   <XAxis type="number" tick={{ fill: '#737373', fontSize: 10, fontFamily: 'var(--font-mono)' }} axisLine={false} tickLine={false} />
@@ -148,11 +118,13 @@ export default function CarbonCalculator() {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
+              </div>
             </GlassCard>
 
             <GlassCard delay={0.15} className="hover:-translate-y-2 hover:border-[var(--color-cyan)]/30 hover:shadow-[0_0_30px_-10px_var(--color-cyan)]">
               <h3 className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-6">How You Compare</h3>
-              <ResponsiveContainer width="100%" height={220}>
+              <div role="img" aria-label="Bar chart showing your footprint compared to global average and target" className="w-full h-[220px]">
+              <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={comparisonData} margin={{ left: 10, right: 20 }}>
                   <CartesianGrid strokeDasharray="2 2" stroke="rgba(255,255,255,0.1)" vertical={false} />
                   <XAxis dataKey="name" tick={{ fill: '#a3a3a3', fontSize: 10, fontFamily: 'var(--font-mono)' }} axisLine={false} tickLine={false} />
@@ -166,6 +138,7 @@ export default function CarbonCalculator() {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
+              </div>
             </GlassCard>
           </div>
 
@@ -196,8 +169,8 @@ export default function CarbonCalculator() {
         </div>
       </div>
       <div>
-        <label className="block font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-4">Household Size: <span className="text-white">{values.householdSize}</span></label>
-        <input type="range" min={1} max={6} value={values.householdSize} onChange={(e) => updateValue('householdSize', +e.target.value)}
+        <label htmlFor="householdSize" className="block font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-4">Household Size: <span className="text-white">{values.householdSize}</span></label>
+        <input id="householdSize" type="range" min={1} max={6} value={values.householdSize} onChange={(e) => updateValue('householdSize', +e.target.value)}
           className="w-full accent-[var(--color-cyan)]" />
       </div>
       <div>
@@ -226,13 +199,13 @@ export default function CarbonCalculator() {
         </div>
       </div>
       <div>
-        <label className="block font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-4">One-Way Commute: <span className="text-white">{values.commuteDistance} miles</span></label>
-        <input type="range" min={0} max={60} value={values.commuteDistance} onChange={(e) => updateValue('commuteDistance', +e.target.value)}
+        <label htmlFor="commuteDistance" className="block font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-4">One-Way Commute: <span className="text-white">{values.commuteDistance} miles</span></label>
+        <input id="commuteDistance" type="range" min={0} max={60} value={values.commuteDistance} onChange={(e) => updateValue('commuteDistance', +e.target.value)}
           className="w-full accent-[var(--color-cyan)]" />
       </div>
       <div>
-        <label className="block font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-4">Round-Trip Flights Per Year: <span className="text-white">{values.flights}</span></label>
-        <input type="range" min={0} max={20} value={values.flights} onChange={(e) => updateValue('flights', +e.target.value)}
+        <label htmlFor="flights" className="block font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-4">Round-Trip Flights Per Year: <span className="text-white">{values.flights}</span></label>
+        <input id="flights" type="range" min={0} max={20} value={values.flights} onChange={(e) => updateValue('flights', +e.target.value)}
           className="w-full accent-[var(--color-cyan)]" />
       </div>
     </div>,
@@ -261,8 +234,8 @@ export default function CarbonCalculator() {
         </div>
       </div>
       <div>
-        <label className="block font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-4">Locally Sourced Food: <span className="text-white">{values.localFood}%</span></label>
-        <input type="range" min={0} max={100} value={values.localFood} onChange={(e) => updateValue('localFood', +e.target.value)}
+        <label htmlFor="localFood" className="block font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-4">Locally Sourced Food: <span className="text-white">{values.localFood}%</span></label>
+        <input id="localFood" type="range" min={0} max={100} value={values.localFood} onChange={(e) => updateValue('localFood', +e.target.value)}
           className="w-full accent-[var(--color-cyan)]" />
       </div>
     </div>,
@@ -280,8 +253,8 @@ export default function CarbonCalculator() {
         </div>
       </div>
       <div>
-        <label className="block font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-4">Daily Streaming: <span className="text-white">{values.streaming} hours</span></label>
-        <input type="range" min={0} max={10} value={values.streaming} onChange={(e) => updateValue('streaming', +e.target.value)}
+        <label htmlFor="streaming" className="block font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-4">Daily Streaming: <span className="text-white">{values.streaming} hours</span></label>
+        <input id="streaming" type="range" min={0} max={10} value={values.streaming} onChange={(e) => updateValue('streaming', +e.target.value)}
           className="w-full accent-[var(--color-cyan)]" />
       </div>
       <div>

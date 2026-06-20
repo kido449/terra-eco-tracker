@@ -4,22 +4,8 @@ import useStore from '../context/useStore';
 import PageHeader from '../components/PageHeader';
 import GlassCard from '../components/GlassCard';
 import AnimatedNumber from '../components/AnimatedNumber';
-
-function calculateFromSliders({ meatMeals, milesDriven, thermostat, flights }) {
-  const meatCO2 = meatMeals * 52 * 3.3;
-  const drivingCO2 = milesDriven * 52 * 0.21;
-  const baseHVAC = 2500;
-  const thermostatCO2 = baseHVAC * (1 + (thermostat - 68) * 0.03);
-  const flightsCO2 = flights * 800;
-
-  return {
-    meat: Math.round(meatCO2),
-    driving: Math.round(drivingCO2),
-    thermostat: Math.round(thermostatCO2),
-    flights: Math.round(flightsCO2),
-    total: Math.round(meatCO2 + drivingCO2 + thermostatCO2 + flightsCO2),
-  };
-}
+import { calculateFromSliders } from '../utils/calculations';
+import { clampNumber } from '../utils/validation';
 
 export default function ImpactSimulator() {
   const simulatorValues = useStore((s) => s.simulatorValues);
@@ -57,10 +43,10 @@ export default function ImpactSimulator() {
           <div className="space-y-8">
             <div>
               <div className="flex justify-between mb-3">
-                <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#a3a3a3]">Meat meals per week</label>
+                <label htmlFor="meatMeals" className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#a3a3a3]">Meat meals per week</label>
                 <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-white">{simulatorValues.meatMeals}</span>
               </div>
-              <input type="range" min={0} max={21} value={simulatorValues.meatMeals}
+              <input id="meatMeals" type="range" min={0} max={21} value={simulatorValues.meatMeals}
                 onChange={(e) => updateSlider('meatMeals', +e.target.value)} className="w-full accent-[var(--color-cyan)]" />
               <div className="flex justify-between font-mono text-[10px] font-bold uppercase tracking-widest text-[#525252] mt-2">
                 <span>0 (plant-based)</span><span>21 (3 daily)</span>
@@ -69,10 +55,10 @@ export default function ImpactSimulator() {
 
             <div>
               <div className="flex justify-between mb-3">
-                <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#a3a3a3]">Miles driven per week</label>
+                <label htmlFor="milesDriven" className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#a3a3a3]">Miles driven per week</label>
                 <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-white">{simulatorValues.milesDriven}</span>
               </div>
-              <input type="range" min={0} max={500} step={5} value={simulatorValues.milesDriven}
+              <input id="milesDriven" type="range" min={0} max={500} step={5} value={simulatorValues.milesDriven}
                 onChange={(e) => updateSlider('milesDriven', +e.target.value)} className="w-full accent-[var(--color-cyan)]" />
               <div className="flex justify-between font-mono text-[10px] font-bold uppercase tracking-widest text-[#525252] mt-2">
                 <span>0 (car-free)</span><span>500</span>
@@ -81,10 +67,10 @@ export default function ImpactSimulator() {
 
             <div>
               <div className="flex justify-between mb-3">
-                <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#a3a3a3]">Thermostat setting (°F)</label>
+                <label htmlFor="thermostat" className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#a3a3a3]">Thermostat setting (°F)</label>
                 <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-white">{simulatorValues.thermostat}°F</span>
               </div>
-              <input type="range" min={60} max={80} value={simulatorValues.thermostat}
+              <input id="thermostat" type="range" min={60} max={80} value={simulatorValues.thermostat}
                 onChange={(e) => updateSlider('thermostat', +e.target.value)} className="w-full accent-[var(--color-cyan)]" />
               <div className="flex justify-between font-mono text-[10px] font-bold uppercase tracking-widest text-[#525252] mt-2">
                 <span>60°F (cool)</span><span>80°F (warm)</span>
@@ -93,10 +79,10 @@ export default function ImpactSimulator() {
 
             <div>
               <div className="flex justify-between mb-3">
-                <label className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#a3a3a3]">Round-trip flights per year</label>
+                <label htmlFor="flights" className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#a3a3a3]">Round-trip flights per year</label>
                 <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-white">{simulatorValues.flights}</span>
               </div>
-              <input type="range" min={0} max={20} value={simulatorValues.flights}
+              <input id="flights" type="range" min={0} max={20} value={simulatorValues.flights}
                 onChange={(e) => updateSlider('flights', +e.target.value)} className="w-full accent-[var(--color-cyan)]" />
               <div className="flex justify-between font-mono text-[10px] font-bold uppercase tracking-widest text-[#525252] mt-2">
                 <span>0</span><span>20</span>
@@ -129,7 +115,8 @@ export default function ImpactSimulator() {
 
           <GlassCard delay={0.2} className="p-6">
             <h3 className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-6">Breakdown by Category</h3>
-            <ResponsiveContainer width="100%" height={240}>
+            <div role="img" aria-label="Bar chart showing breakdown of emissions: meat/diet, driving, heating/ac, and flights" className="w-full h-[240px]">
+            <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ left: 0, right: 10 }}>
                 <CartesianGrid strokeDasharray="2 2" stroke="rgba(255,255,255,0.1)" vertical={false} />
                 <XAxis dataKey="name" tick={{ fill: '#a3a3a3', fontSize: 10, fontFamily: 'var(--font-mono)' }} axisLine={false} tickLine={false} />
@@ -143,6 +130,7 @@ export default function ImpactSimulator() {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+            </div>
           </GlassCard>
         </div>
       </div>

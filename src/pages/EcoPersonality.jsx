@@ -5,6 +5,7 @@ import PageHeader from '../components/PageHeader';
 import GlassCard from '../components/GlassCard';
 import ProgressBar from '../components/ProgressBar';
 import { quizQuestions, archetypes } from '../data/quiz';
+import { calculateArchetype } from '../utils/calculations';
 
 export default function EcoPersonality() {
   const quizCompleted = useStore((s) => s.quizCompleted);
@@ -17,16 +18,6 @@ export default function EcoPersonality() {
   const [showResults, setShowResults] = useState(quizCompleted);
 
   const totalQuestions = quizQuestions.length;
-
-  const calculateArchetype = (allAnswers) => {
-    const scores = { optimizer: 0, minimalist: 0, advocate: 0, innovator: 0, naturalist: 0 };
-    allAnswers.forEach((answerScores) => {
-      Object.entries(answerScores).forEach(([key, val]) => {
-        scores[key] = (scores[key] || 0) + val;
-      });
-    });
-    return Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
-  };
 
   const handleAnswer = (option) => {
     const newAnswers = [...answers, option.scores];

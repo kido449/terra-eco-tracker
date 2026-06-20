@@ -19,8 +19,11 @@ export default function MetricsTicker() {
   const tickerItems = [...items, ...items, ...items, ...items];
 
   return (
-    <div className="w-full h-[60px] bg-black/40 border-y border-white/5 overflow-hidden flex items-center relative z-40">
-      <div className="flex w-[200%] animate-scroll-x whitespace-nowrap">
+    <div role="status" aria-label="Live metrics" className="w-full h-[60px] bg-black/40 border-y border-white/5 overflow-hidden flex items-center relative z-40">
+      <div className="sr-only">
+        Current metrics: Eco Score {ecoScore}, Streak {streak} days, Today Saved {todaySaved.toFixed(1)} kg, Total Averted {totalCO2Saved.toFixed(1)} kg, Missions Clear {activeMissionsCount}.
+      </div>
+      <div aria-hidden="true" className="flex w-[200%] animate-scroll-x whitespace-nowrap">
         {tickerItems.map((item, idx) => (
           <div key={idx} className="flex items-center gap-2 px-8">
             <span className="font-mono text-[10px] uppercase tracking-widest text-[#737373]">{item.label}</span>

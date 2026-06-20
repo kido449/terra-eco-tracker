@@ -89,6 +89,9 @@ export default function CarbonOffsetMarketplace() {
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
                 transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
                 onClick={(e) => e.stopPropagation()}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="modal-title"
                 className="w-full max-w-xl bg-[#080808] rounded-[32px] overflow-hidden relative shadow-[0_0_50px_rgba(0,0,0,0.8)] border border-white/10"
               >
                 <div
@@ -99,13 +102,14 @@ export default function CarbonOffsetMarketplace() {
                 <div className="p-8 sm:p-10">
                   <div className="flex justify-between items-start mb-6 gap-4">
                     <div>
-                      <h2 className="text-3xl sm:text-4xl font-display text-white mb-3 tracking-tight leading-none">{selectedProject.title}</h2>
+                      <h2 id="modal-title" className="text-3xl sm:text-4xl font-display text-white mb-3 tracking-tight leading-none">{selectedProject.title}</h2>
                       <p className="font-mono text-[10px] uppercase tracking-widest text-[#737373] flex items-center gap-2">
                         <span className="grayscale opacity-40">📍</span> {selectedProject.location}
                       </p>
                     </div>
                     <button
                       onClick={() => setSelectedProject(null)}
+                      aria-label="Close details"
                       className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[#a3a3a3] hover:text-white hover:bg-white/10 hover:border-white/20 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cyan)] shrink-0"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -36,10 +36,14 @@ export default function LivingOrb() {
   const ringOffset = ringCircumference - (progressPct / 100) * ringCircumference;
 
   return (
-    <div className="relative w-[320px] h-[320px] flex items-center justify-center shrink-0">
+    <div 
+      className="relative w-[320px] h-[320px] flex items-center justify-center shrink-0"
+      role="img"
+      aria-label={`Eco Score: ${ecoScore} out of 100`}
+    >
       
       {/* SVG Canvas */}
-      <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 300 300">
+      <svg aria-hidden="true" className="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 300 300">
         
         {/* Progress Ring Background */}
         <circle cx="150" cy="150" r="145" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="2" />
@@ -66,7 +70,16 @@ export default function LivingOrb() {
           fill={orbColor}
           opacity="0.8"
           onClick={() => navigate('/assess')}
-          className="cursor-pointer"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              navigate('/assess');
+            }
+          }}
+          tabIndex={0}
+          role="button"
+          aria-label="Start Assessment"
+          className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
           whileTap={{ scale: 0.95 }}
           whileHover={{ scale: 1.02 }}
           style={{ filter: `drop-shadow(0 0 20px ${orbColor})` }}
