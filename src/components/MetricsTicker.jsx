@@ -1,5 +1,10 @@
 import useStore from '../context/useStore';
 
+/**
+ * MetricsTicker
+ * An infinite scrolling marquee displaying high-level live metrics like Eco Score,
+ * active streak, and carbon averted. Duplicate items are rendered to ensure a smooth loop.
+ */
 export default function MetricsTicker() {
   const ecoScore = useStore((s) => s.ecoScore);
   const streak = useStore((s) => s.streak);

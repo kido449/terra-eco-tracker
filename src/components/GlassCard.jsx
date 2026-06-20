@@ -1,5 +1,11 @@
+import PropTypes from 'prop-types';
 import { motion, useReducedMotion } from 'framer-motion';
 
+/**
+ * GlassCard
+ * A stylized container component providing a glassmorphism effect,
+ * optional hover animations, and an optional colored left border accent.
+ */
 export default function GlassCard({ children, className = '', hover = true, delay = 0, colorAccent = null, ...props }) {
   const shouldReduceMotion = useReducedMotion();
   // Optional left border accent
@@ -18,3 +24,11 @@ export default function GlassCard({ children, className = '', hover = true, dela
     </motion.div>
   );
 }
+
+GlassCard.propTypes = {
+  children: PropTypes.node.isRequired,
+  className: PropTypes.string,
+  hover: PropTypes.bool,
+  delay: PropTypes.number,
+  colorAccent: PropTypes.string
+};

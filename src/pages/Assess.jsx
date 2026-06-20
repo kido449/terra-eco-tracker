@@ -62,7 +62,7 @@ export default function Assess() {
             </div>
           ) : (
             <div>
-              <p className="text-sm text-[#a3a3a3] leading-relaxed mb-3">archetype not revealed.</p>
+              <p className="text-sm text-[#a3a3a3] leading-relaxed mb-3">Your Eco Personality is unknown. Build awareness by discovering your archetype.</p>
               <Link 
                 to="/assess/personality" 
                 className="inline-block font-mono text-[9px] uppercase tracking-widest font-bold text-[var(--color-violet)] hover:text-white transition-colors"
@@ -94,7 +94,7 @@ export default function Assess() {
             </div>
           ) : (
             <div>
-              <p className="text-sm text-[#a3a3a3] leading-relaxed mb-3">No calculations recorded yet.</p>
+              <p className="text-sm text-[#a3a3a3] leading-relaxed mb-3">Your footprint is unknown. Take the first step toward awareness by calculating your baseline.</p>
               <Link 
                 to="/assess/calculator" 
                 className="inline-block font-mono text-[9px] uppercase tracking-widest font-bold text-[var(--color-cyan)] hover:text-white transition-colors"

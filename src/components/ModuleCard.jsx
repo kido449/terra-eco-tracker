@@ -1,6 +1,11 @@
+import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
+/**
+ * ModuleCard
+ * A navigational card leading to a specific sub-module with status badges.
+ */
 export default function ModuleCard({ icon, title, description, route, status, delay = 0 }) {
   const statusColors = {
     Available: 'bg-[var(--color-mint)]/20 text-[var(--color-forest)]',
@@ -39,3 +44,12 @@ export default function ModuleCard({ icon, title, description, route, status, de
     </motion.div>
   );
 }
+
+ModuleCard.propTypes = {
+  icon: PropTypes.node.isRequired,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  route: PropTypes.string.isRequired,
+  status: PropTypes.string,
+  delay: PropTypes.number
+};

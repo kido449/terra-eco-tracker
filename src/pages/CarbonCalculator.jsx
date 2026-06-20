@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import PropTypes from 'prop-types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import useStore from '../context/useStore';
@@ -30,6 +31,20 @@ const defaultValues = {
   recycling: 'sometimes',
 };
 
+function ProgressBar({ value, max, label, className }) {
+  return (
+    <div className={className}>
+      <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-[#737373] mb-2">
+        <span>{label}</span>
+        <span>{Math.round(((value + 1) / max) * 100)}%</span>
+      </div>
+      <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+        <motion.div className="h-full bg-[var(--color-cyan)]" initial={{ width: 0 }} animate={{ width: `${((value + 1) / max) * 100}%` }} />
+      </div>
+    </div>
+  );
+}
+ProgressBar.propTypes = { value: PropTypes.number, max: PropTypes.number, label: PropTypes.string, className: PropTypes.string };
 
 export default function CarbonCalculator() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -41,9 +56,13 @@ export default function CarbonCalculator() {
 
   const results = useMemo(() => calculateFootprint(values), [values]);
 
-  const handleComplete = () => {
-    saveCalculatorResults(results);
-    setShowResults(true);
+  const handleNext = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      saveCalculatorResults(results);
+      setShowResults(true);
+    }
   };
 
   const chartData = [
@@ -65,8 +84,6 @@ export default function CarbonCalculator() {
       <div>
         <PageHeader title="Your Carbon Footprint" description="Here's your estimated annual carbon footprint breakdown." />
         <div className="max-w-4xl mx-auto space-y-8">
-          
-          {/* IDE Block Results Display */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -156,7 +173,58 @@ export default function CarbonCalculator() {
   }
 
   const stepContent = [
-    <div key="housing" className="space-y-8">
+    <HousingStep key="housing" values={values} updateValue={updateValue} />,
+    <TransportStep key="transport" values={values} updateValue={updateValue} />,
+    <DietStep key="diet" values={values} updateValue={updateValue} />,
+    <LifestyleStep key="lifestyle" values={values} updateValue={updateValue} />
+  ];
+
+  return (
+    <div>
+      <PageHeader title="Carbon Calculator" description="Estimate your annual carbon footprint in 4 steps." />
+
+      <div className="max-w-2xl mx-auto">
+        <ProgressBar value={currentStep} max={4} label={`Step ${currentStep + 1} of 4: ${steps[currentStep].label}`} className="mb-8" />
+        
+        <GlassCard className="p-8">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+            >
+              {stepContent[currentStep]}
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="flex justify-between mt-12 pt-8 border-t border-white/5">
+            <button
+              onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
+              disabled={currentStep === 0}
+              className={`font-mono text-[10px] uppercase tracking-widest font-bold px-6 py-2 rounded-full border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cyan)] ${currentStep === 0 ? 'border-white/5 text-white/20 cursor-not-allowed' : 'border-white/10 text-[#a3a3a3] hover:text-white hover:bg-white/5'}`}
+            >
+              Back
+            </button>
+            <button
+              onClick={handleNext}
+              className="font-mono text-[10px] uppercase tracking-widest font-bold px-8 py-2 rounded-full border border-[var(--color-cyan)]/50 bg-[var(--color-cyan)]/10 text-white hover:bg-[var(--color-cyan)]/20 hover:border-[var(--color-cyan)] transition-all shadow-[0_0_15px_-3px_var(--color-cyan)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cyan)]"
+            >
+              {currentStep === 3 ? 'Calculate' : 'Next'}
+            </button>
+          </div>
+        </GlassCard>
+      </div>
+    </div>
+  );
+}
+
+// --- Sub-components ---
+
+function HousingStep({ values, updateValue }) {
+  return (
+    <div className="space-y-8">
       <div>
         <label className="block font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-4">Housing Type</label>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -184,9 +252,14 @@ export default function CarbonCalculator() {
           ))}
         </div>
       </div>
-    </div>,
+    </div>
+  );
+}
+HousingStep.propTypes = { values: PropTypes.object.isRequired, updateValue: PropTypes.func.isRequired };
 
-    <div key="transport" className="space-y-8">
+function TransportStep({ values, updateValue }) {
+  return (
+    <div className="space-y-8">
       <div>
         <label className="block font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-4">Primary Commute Mode</label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -208,9 +281,14 @@ export default function CarbonCalculator() {
         <input id="flights" type="range" min={0} max={20} value={values.flights} onChange={(e) => updateValue('flights', +e.target.value)}
           className="w-full accent-[var(--color-cyan)]" />
       </div>
-    </div>,
+    </div>
+  );
+}
+TransportStep.propTypes = { values: PropTypes.object.isRequired, updateValue: PropTypes.func.isRequired };
 
-    <div key="diet" className="space-y-8">
+function DietStep({ values, updateValue }) {
+  return (
+    <div className="space-y-8">
       <div>
         <label className="block font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-4">Diet Type</label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -238,9 +316,14 @@ export default function CarbonCalculator() {
         <input id="localFood" type="range" min={0} max={100} value={values.localFood} onChange={(e) => updateValue('localFood', +e.target.value)}
           className="w-full accent-[var(--color-cyan)]" />
       </div>
-    </div>,
+    </div>
+  );
+}
+DietStep.propTypes = { values: PropTypes.object.isRequired, updateValue: PropTypes.func.isRequired };
 
-    <div key="lifestyle" className="space-y-8">
+function LifestyleStep({ values, updateValue }) {
+  return (
+    <div className="space-y-8">
       <div>
         <label className="block font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-4">Shopping Frequency</label>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -268,79 +351,7 @@ export default function CarbonCalculator() {
           ))}
         </div>
       </div>
-    </div>,
-  ];
-
-  return (
-    <div>
-      <PageHeader title="Carbon Calculator" description="Estimate your annual carbon footprint in 4 steps." />
-
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center justify-center gap-2 mb-10">
-          {steps.map((step, i) => (
-            <div key={step.id} className="flex items-center gap-2">
-              <button
-                onClick={() => setCurrentStep(i)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cyan)] ${
-                  i === currentStep ? 'bg-[var(--color-cyan)]/20 border border-[var(--color-cyan)] text-white shadow-[0_0_15px_-3px_var(--color-cyan)]' : i < currentStep ? 'bg-white/5 border border-white/10 text-white hover:border-[var(--color-violet)]/50' : 'bg-transparent text-[#525252]'
-                }`}
-              >
-                <span className={i !== currentStep ? 'grayscale opacity-60' : ''}>{step.icon}</span>
-                <span className="hidden sm:inline">{step.label}</span>
-              </button>
-              {i < steps.length - 1 && <div className={`w-6 h-[1px] ${i < currentStep ? 'bg-[var(--color-cyan)]' : 'bg-white/10'}`} />}
-            </div>
-          ))}
-        </div>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-          >
-            <GlassCard className="p-8">
-              <h2 className="text-3xl font-display text-white mb-8 flex items-center gap-3">
-                <span className="w-10 h-10 rounded-[12px] bg-[var(--color-violet)]/10 flex items-center justify-center text-xl shrink-0 shadow-[inset_0_0_12px_rgba(139,92,246,0.2)]">{steps[currentStep].icon}</span>
-                {steps[currentStep].label}
-              </h2>
-              {stepContent[currentStep]}
-            </GlassCard>
-          </motion.div>
-        </AnimatePresence>
-
-        <div className="mt-8 rounded-[24px] border border-[var(--color-cyan)]/30 bg-[var(--color-cyan)]/5 p-6 flex flex-col sm:flex-row sm:items-center justify-between shadow-[0_0_30px_-10px_rgba(6,182,212,0.15)] gap-4">
-          <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--color-cyan)]">Estimated footprint so far:</span>
-          <span className="text-xl font-bold text-white tabular-nums tracking-tight">{(results.total / 1000).toFixed(1)} <span className="text-sm font-normal text-[#a3a3a3]">tonnes CO₂/year</span></span>
-        </div>
-
-        <div className="flex justify-between mt-10">
-          <button
-            onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-            disabled={currentStep === 0}
-            className="px-6 py-3 rounded-full border border-white/10 bg-[var(--color-dark)] text-[12px] uppercase tracking-widest font-bold text-[#a3a3a3] hover:text-white hover:border-white/30 disabled:opacity-20 disabled:cursor-not-allowed transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cyan)]"
-          >
-            Back
-          </button>
-          {currentStep < steps.length - 1 ? (
-            <button
-              onClick={() => setCurrentStep(currentStep + 1)}
-              className="px-8 py-3 rounded-full bg-white text-[12px] uppercase tracking-widest font-bold text-black hover:bg-[#e5e5e5] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cyan)] shadow-lg"
-            >
-              Next Step
-            </button>
-          ) : (
-            <button
-              onClick={handleComplete}
-              className="px-8 py-3 rounded-full bg-gradient-to-r from-[var(--color-violet)] to-[var(--color-cyan)] text-[12px] uppercase tracking-widest font-bold text-white hover:opacity-90 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white shadow-[0_0_20px_-5px_var(--color-cyan)]"
-            >
-              See Results
-            </button>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
+LifestyleStep.propTypes = { values: PropTypes.object.isRequired, updateValue: PropTypes.func.isRequired };

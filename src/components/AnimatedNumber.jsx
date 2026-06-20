@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Animated count-up number component.
@@ -55,3 +56,10 @@ export default function AnimatedNumber({ value, duration = 600, decimals = 1, cl
     </span>
   );
 }
+
+AnimatedNumber.propTypes = {
+  value: PropTypes.number.isRequired,
+  duration: PropTypes.number,
+  decimals: PropTypes.number,
+  className: PropTypes.string
+};

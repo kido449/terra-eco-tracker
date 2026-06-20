@@ -32,7 +32,7 @@ export default function Learn() {
               {streak} <span className="text-lg font-sans font-light text-[#737373]">{streak === 1 ? 'day' : 'days'}</span>
             </h3>
             <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--color-violet)]">
-              {streak > 0 ? 'Streak Active!' : 'Log actions to start streak'}
+              {streak > 0 ? 'Streak Active!' : 'Build awareness daily to start your streak'}
             </p>
           </div>
           <div className="border-t border-white/5 pt-3 mt-3 flex justify-between items-center text-[10px] text-[#737373]">

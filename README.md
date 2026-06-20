@@ -1,20 +1,25 @@
-# 🌍 Terra
+# 🌍 Terra: Carbon Footprint Awareness Platform
 
 ### Know Your Impact. Shape Your Future.
 
-Terra is a sustainability platform built for **Prompt Wars Virtual – Challenge 3: Carbon Footprint Awareness Platform**. Instead of just spitting out a carbon score, Terra helps people *understand* their footprint and build real, lasting habits through personalization, education, and gamification.
+## 🚨 The Problem: Carbon Blindness
+Most people want to live sustainably, but they suffer from **Carbon Blindness**. They don't know the actual carbon cost of their daily habits. Without accurate, personalized awareness, well-meaning actions are often misdirected. A generic "eco score" isn't enough to drive real behavior change.
 
-🔗 **Live Demo:** (https://terra-track.netlify.app/)
+## 💡 The Solution: Terra
+Terra is a personal sustainability platform designed to bridge the gap between abstract climate data and daily habits. Built for **Prompt Wars Virtual – Challenge 3**, Terra focuses entirely on **Carbon Footprint Awareness and Behavior Change**. 
+
+Rather than just displaying a generic metric, Terra helps users *understand* their footprint through deep personalization, real-time "what-if" simulations, and gamified habit building.
+
 ---
 
-## ✨ Key Features
+## ✨ Key Features (And How They Build Awareness)
 
-| Feature | Description |
+| Feature | How it Solves the Problem |
 |---|---|
-| 🧬 **Eco Personality Assessment** | A short quiz that scores you into a sustainability archetype, not just a number |
-| 🔍 **Carbon Blind Spot Detector** | Surfaces high-impact habits people usually underestimate (streaming, fast fashion, food delivery) |
-| 🧮 **Carbon Footprint Calculator** | Category-wise breakdown benchmarked against national/global averages |
-| 📊 **Impact Simulator** | Real-time "what-if" sliders that recompute your projected annual footprint |
+| 🧮 **Carbon Footprint Calculator** | **Baseline Awareness:** Calculates a personalized footprint across housing, transport, diet, and lifestyle, benchmarking against global averages. |
+| 📊 **Impact Simulator** | **Actionable Insights:** "What-if" sliders let users experiment with lifestyle changes (e.g., eating less meat) to see the projected annual CO₂ reduction in real-time. |
+| 🔍 **Carbon Blind Spot Detector** | **Uncovering Hidden Impact:** Surfaces high-impact habits people usually underestimate, such as fast fashion or streaming habits. |
+| 🧬 **Eco Personality Assessment** | **Personalized Context:** Scores users into archetypes, tailoring sustainability advice to their specific lifestyle. |
 | 📚 **Sustainability Learning Hub** | Bite-sized, sourced tips organized by category |
 | ✅ **Weekly Missions & Habit Tracker** | Streak-based habit building with a heatmap-style tracker |
 | 🏆 **Eco Challenges & Badges** | Unlockable achievements that reward consistency |

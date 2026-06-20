@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Layout & Shared
 import Layout from './components/Layout';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Overview
 import Dashboard from './pages/Dashboard';
@@ -29,9 +30,10 @@ import CarbonOffsetMarketplace from './pages/CarbonOffsetMarketplace';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
           <Route path="/" element={<Dashboard />} />
 
           {/* Assess */}
@@ -56,7 +58,8 @@ function App() {
           <Route path="/act/offsets" element={<CarbonOffsetMarketplace />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

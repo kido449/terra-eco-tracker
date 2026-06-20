@@ -16,12 +16,12 @@ export default function DashboardHero() {
       {/* Left Content */}
       <div className="flex-1 max-w-2xl z-10 flex flex-col items-start gap-6 relative">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-display text-white leading-[0.9] tracking-tight">
-          Track your impact. <br />
-          Shape the <span className="animate-text-shimmer inline-block">future.</span>
+          Understand your impact. <br />
+          Change your <span className="animate-text-shimmer inline-block">habits.</span>
         </h1>
         
         <p className="text-lg text-[#a3a3a3] max-w-lg leading-relaxed font-sans font-light">
-          Monitor your carbon footprint, offset emissions, and build sustainable habits with real-time data insights.
+          Most of us are blind to our actual carbon footprint. Discover your baseline, uncover hidden impacts, and build sustainable habits.
         </p>
 
         <div className="flex items-center gap-6 mt-4">
@@ -31,8 +31,8 @@ export default function DashboardHero() {
             <div aria-hidden="true" className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0%,transparent_40%,var(--color-violet)_50%,var(--color-cyan)_60%,transparent_100%)] animate-[spin_4s_linear_infinite]" />
             
             {/* Button Content */}
-            <Link to="/assess" className="relative block px-10 py-4 bg-[#0a0a0a] rounded-full font-mono text-[12px] uppercase tracking-widest font-bold text-white transition-colors group-hover:bg-[#151515] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cyan)] focus-visible:ring-offset-2 focus-visible:ring-offset-black text-center">
-              Start Assessment
+            <Link to="/assess/calculator" className="relative block px-10 py-4 bg-[#0a0a0a] rounded-full font-mono text-[12px] uppercase tracking-widest font-bold text-white transition-colors group-hover:bg-[#151515] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cyan)] focus-visible:ring-offset-2 focus-visible:ring-offset-black text-center">
+              Calculate Your Footprint
             </Link>
           </div>
 

@@ -1,6 +1,11 @@
+import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 import AnimatedNumber from './AnimatedNumber';
 
+/**
+ * StatCard
+ * Displays a single statistic metric with an icon, animated value, and optional label/suffix.
+ */
 export default function StatCard({ icon, label, value, suffix = '', decimals = 0, delay = 0, accentColor = 'forest' }) {
   return (
     <motion.div
@@ -28,3 +33,13 @@ export default function StatCard({ icon, label, value, suffix = '', decimals = 0
     </motion.div>
   );
 }
+
+StatCard.propTypes = {
+  icon: PropTypes.node.isRequired,
+  label: PropTypes.string.isRequired,
+  value: PropTypes.number.isRequired,
+  suffix: PropTypes.string,
+  decimals: PropTypes.number,
+  delay: PropTypes.number,
+  accentColor: PropTypes.string
+};

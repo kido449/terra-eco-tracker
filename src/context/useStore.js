@@ -20,7 +20,17 @@ function getGreeting() {
   return 'Good evening';
 }
 
-// Tier calculation based on eco score
+/**
+ * getTier
+ * Maps a numeric eco score to a user-friendly tier name.
+ * 
+ * WHY these thresholds?
+ * The 0-100 scale is divided into 20-point increments to create achievable milestones.
+ * Frequent, attainable tier changes promote sustained engagement and gamification.
+ * 
+ * @param {number} score - The user's current Eco Score.
+ * @returns {string} The tier name.
+ */
 function getTier(score) {
   if (score >= 80) return 'Eco Champion';
   if (score >= 60) return 'Eco Warrior';
@@ -94,12 +104,14 @@ const useStore = create(
 
       // ─── Daily Reset Logic ─────────────────────────────────
       /**
+       * performDailyReset
        * Called on app mount. Checks if the stored date matches today.
-       * If not:
-       *   1. If lastActiveDate === yesterday AND user logged actions → streak++
-       *   2. Otherwise → streak = 0
-       *   3. Reset today's data (actions, saved, breakdown)
-       *   4. Update lastActiveDate to today
+       * 
+       * WHY this logic?
+       * Streaks are crucial for habit-building apps. This robust rollover check handles edge cases:
+       * - If the user logs in but doesn't take an action, the streak shouldn't break immediately, but should wait until the next day.
+       * - If the user skips a day entirely, the streak resets to 0.
+       * - Local timezone differences are mitigated by comparing YYYY-MM-DD strings.
        */
       performDailyReset: () => {
         const today = todayStr();

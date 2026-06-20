@@ -1,6 +1,19 @@
 // ─── Carbon Footprint Calculator ────────────────────────────
 // Extracted from CarbonCalculator.jsx for testability
 
+/**
+ * calculateFootprint
+ * Calculates the user's estimated annual carbon footprint in kg CO2.
+ * 
+ * WHY these specific numbers?
+ * - Housing: Baseline uses national averages for different house sizes. Electricity multipliers reflect general grid intensity differences.
+ * - Transport: 0.21 kg CO2/mile is a rough average for standard gas-powered cars. Hybrid/EV numbers account for grid emissions. Flights use an average 800 kg per round trip (e.g., cross-country US).
+ * - Diet: 3300 kg represents an average omnivore footprint. Vegans see ~50% reduction (1500 kg) due to the absence of high-impact ruminant meat (beef/lamb).
+ * - Lifestyle: A baseline of 800 kg covers basic consumption. Streaming adds ~20 kg per hour per year based on data center + network + device energy.
+ * 
+ * @param {Object} values - The input values from the calculator form.
+ * @returns {Object} A breakdown of the footprint categories and the total.
+ */
 export function calculateFootprint(values) {
   let housing = 0, transport = 0, diet = 0, lifestyle = 0;
 
@@ -38,6 +51,18 @@ export function calculateFootprint(values) {
 // ─── Impact Simulator ───────────────────────────────────────
 // Extracted from ImpactSimulator.jsx for testability
 
+/**
+ * calculateFromSliders
+ * Recalculates projected carbon footprint based on real-time simulator slider changes.
+ * 
+ * WHY these formulas?
+ * - Meat: 3.3 kg CO2 per meal * 52 weeks represents a standard beef-heavy meal replacement.
+ * - Driving: 0.21 kg CO2 per mile * 52 weeks calculates direct tailpipe emissions.
+ * - Thermostat: A 3% energy increase per degree Fahrenheit difference from the baseline (68F) is a standard HVAC rule of thumb.
+ * 
+ * @param {Object} sliders - The simulator slider values.
+ * @returns {Object} A breakdown of projected emissions based on the sliders.
+ */
 export function calculateFromSliders({ meatMeals, milesDriven, thermostat, flights }) {
   const meatCO2 = meatMeals * 52 * 3.3;
   const drivingCO2 = milesDriven * 52 * 0.21;
@@ -57,6 +82,18 @@ export function calculateFromSliders({ meatMeals, milesDriven, thermostat, fligh
 // ─── Eco Personality Quiz Scoring ───────────────────────────
 // Extracted from EcoPersonality.jsx for testability
 
+/**
+ * calculateArchetype
+ * Determines the user's Eco Personality based on quiz responses.
+ * 
+ * WHY this approach?
+ * The quiz uses a weighted scoring system rather than a simple 1-to-1 mapping. Each answer awards points to one or more 
+ * personality traits (e.g., optimizer, naturalist). The archetype with the highest total points becomes the user's result, 
+ * allowing for nuanced personality mapping instead of rigid categorization.
+ * 
+ * @param {Array<Object>} allAnswers - An array of score mappings from the user's chosen options.
+ * @returns {string} The ID of the winning archetype.
+ */
 export function calculateArchetype(allAnswers) {
   const scores = { optimizer: 0, minimalist: 0, advocate: 0, innovator: 0, naturalist: 0 };
   allAnswers.forEach((answerScores) => {

@@ -1,5 +1,10 @@
+import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 
+/**
+ * ProgressBar
+ * A horizontal progress bar tracking completion against a maximum value.
+ */
 export default function ProgressBar({ value, max = 100, label = '', showPercentage = true, className = '' }) {
   const pct = Math.min((value / max) * 100, 100);
 
@@ -22,3 +27,11 @@ export default function ProgressBar({ value, max = 100, label = '', showPercenta
     </div>
   );
 }
+
+ProgressBar.propTypes = {
+  value: PropTypes.number.isRequired,
+  max: PropTypes.number,
+  label: PropTypes.string,
+  showPercentage: PropTypes.bool,
+  className: PropTypes.string
+};

@@ -1,3 +1,9 @@
+import PropTypes from 'prop-types';
+
+/**
+ * PageHeader
+ * Consistent header structure across primary pages with a title and optional description.
+ */
 export default function PageHeader({ title, description, children }) {
   return (
     <div className="mb-10">
@@ -13,3 +19,9 @@ export default function PageHeader({ title, description, children }) {
     </div>
   );
 }
+
+PageHeader.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  children: PropTypes.node
+};

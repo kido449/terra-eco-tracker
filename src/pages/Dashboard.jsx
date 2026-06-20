@@ -77,7 +77,7 @@ export default function Dashboard() {
 
         {/* Explore Modules Grid */}
         <div id="explore-modules">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-6">Explore Modules</h2>
+          <h2 className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#737373] mb-6">Tools for Awareness & Action</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {modules.map((mod, i) => (
               <ModuleCard
