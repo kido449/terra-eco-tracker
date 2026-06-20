@@ -4,9 +4,7 @@
 
 Terra is a sustainability platform built for **Prompt Wars Virtual – Challenge 3: Carbon Footprint Awareness Platform**. Instead of just spitting out a carbon score, Terra helps people *understand* their footprint and build real, lasting habits through personalization, education, and gamification.
 
-🔗 **Live Demo:** [your-netlify-link-here](#)
-🎥 **Demo Video:** [link to your LinkedIn/YouTube demo](#)
-
+🔗 **Live Demo:** (https://terra-track.netlify.app/)
 ---
 
 ## ✨ Key Features
@@ -90,12 +88,3 @@ terra/
 
 Building Terra was as much a product design exercise as an engineering one — from architecting multi-module routing and state management, to iterating on the visual design system multiple times to land on something that felt premium rather than templated.
 
----
-
-## 🙌 Acknowledgements
-
-Built solo for **Prompt Wars Virtual – Challenge 3**.
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
